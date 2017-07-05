@@ -17,15 +17,23 @@ class BooksApp extends React.Component {
     sections: [
       {
         key: 'currentlyReading',
-        title: 'Currently Reading'
+        title: 'Currently Reading',
+        hidden: false
       },
       {
         key: 'wantToRead',
-        title: 'Want to Read'
+        title: 'Want to Read',
+        hidden: false
       },
       {
         key: 'read',
-        title: 'Read'
+        title: 'Read',
+        hidden: false
+      },
+      {
+        key: '',
+        title: 'None',
+        hidden: true
       }
     ]
   };
@@ -58,10 +66,11 @@ class BooksApp extends React.Component {
                 <h1>MyReads</h1>
               </div>
                 {
-                  this.state.sections.map((section) => (
+                  this.state.sections.filter((section) => !section.hidden).map((section) => (
                     <div key={section.key} className="list-books-content">
-                    <ShelfComponent shelfName={section.title}
-                                    books={this.state.books.filter((book) => book.shelf === section.key)}/>
+                    <ShelfComponent shelf={section}
+                                    books={this.state.books.filter((book) => book.shelf === section.key)}
+                                    sections={this.state.sections}/>
                     </div>
                   ))
                 }
