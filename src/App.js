@@ -13,7 +13,21 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    books: []
+    books: [],
+    sections: [
+      {
+        key: 'currentlyReading',
+        title: 'Currently Reading'
+      },
+      {
+        key: 'wantToRead',
+        title: 'Want to Read'
+      },
+      {
+        key: 'read',
+        title: 'Read'
+      }
+    ]
   };
 
   componentDidMount() {
@@ -43,20 +57,15 @@ class BooksApp extends React.Component {
               <div className="list-books-title">
                 <h1>MyReads</h1>
               </div>
-              <div className="list-books-content">
-                <ShelfComponent shelfName="Currently Reading"
-                                books={this.state.books.filter((book) => book.shelf === 'currentlyReading')}/>
-              </div>
-              <div className="list-books-content">
-                <ShelfComponent shelfName="Want to Read"
-                                books={this.state.books.filter((book) => book.shelf === 'wantToRead')}/>
-              </div>
-              <div className="list-books-content">
-                <ShelfComponent shelfName="Read"
-                                books={this.state.books.filter((book) => book.shelf === 'read')}/>
-              </div>
+                {
+                  this.state.sections.map((section) => (
+                    <div key={section.key} className="list-books-content">
+                    <ShelfComponent shelfName={section.title}
+                                    books={this.state.books.filter((book) => book.shelf === section.key)}/>
+                    </div>
+                  ))
+                }
             </div>
-
             <div className="open-search">
               <a onClick={() => this.setState({showSearchPage: true})}>Add a book</a>
             </div>
