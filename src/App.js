@@ -42,13 +42,34 @@ class BooksApp extends React.Component {
   };
 
   componentDidMount() {
-    BooksAPI.getAll().then((data) => {
-      this.setState({books: data});
+    BooksAPI.getAll().then((response) => {
+      console.log(response);
+      this.setState({books: response});
     })
   }
 
   handleShelfChange = function(book, newShelf) {
-    console.log('set shelf for book', book, newShelf)
+    BooksAPI.update(book, newShelf).then((response) => {
+      console.log(response);
+      // Update the shelf of the book according to the required shelf
+      // Note: This does not evaluate the response, as the response
+      //       has a very different structure then the original structure
+      // TODO HHE Check, if structures can be unified
+      //          (i.e. first transform response to simple array or make hashMap with books instead of array)
+      this.setState((previousState) => {
+        return {
+          books: previousState.books.map((newBook) => {
+            if (newBook.id === book.id) {
+              newBook.shelf = newShelf
+            }
+            return newBook;
+          })
+        }
+      });
+    })
+      .catch((error) => (
+        console.log(error)
+      ))
   };
 
   render() {
