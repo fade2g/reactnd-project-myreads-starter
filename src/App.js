@@ -13,7 +13,9 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
+    // Holds the books retrieved from backend
     books: [],
+    // base data with the available sections
     sections: [
       {
         key: 'currentlyReading',
@@ -30,6 +32,7 @@ class BooksApp extends React.Component {
         title: 'Read',
         hidden: false
       },
+      // special section to remove book from shelf. Not visible as a section (thus: hidden === false)
       {
         key: '',
         title: 'None',
@@ -44,6 +47,10 @@ class BooksApp extends React.Component {
     })
   }
 
+  handleShelfChange = function(book, newShelf) {
+    console.log('set shelf for book', book, newShelf)
+  };
+
   render() {
     return (
       <div className="app">
@@ -56,7 +63,7 @@ class BooksApp extends React.Component {
               </div>
             </div>
             <div className="search-books-results">
-              <ol className="books-grid"></ol>
+              <ol className="books-grid">TODO</ol>
             </div>
           </div>
         ) : (
@@ -70,7 +77,8 @@ class BooksApp extends React.Component {
                     <div key={section.key} className="list-books-content">
                     <ShelfComponent shelf={section}
                                     books={this.state.books.filter((book) => book.shelf === section.key)}
-                                    sections={this.state.sections}/>
+                                    sections={this.state.sections}
+                                    onShelfChange={(book, newShelf) => (this.handleShelfChange(book, newShelf))}/>
                     </div>
                   ))
                 }

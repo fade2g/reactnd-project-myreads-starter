@@ -4,39 +4,39 @@ import MenuActionComponent from './MenuActionComponent';
 
 
 class BookComponent extends Component {
+
+  //noinspection JSUnusedGlobalSymbols
   static propTypes = {
-    bookTitle: PropTypes.string.isRequired,
-    bookAuthors: PropTypes.array.isRequired,
-    bookImage: PropTypes.string.isRequired,
+    book: PropTypes.object.isRequired,
     actions: PropTypes.array,
-    selectedActionKey: PropTypes.string
+    selectedAction: PropTypes.object,
+    onShelfChange: PropTypes.func.isRequired
   };
 
-  handleChange(event) {
-    // TODO HHE Implement
-    console.log(event.target.value)
-  }
+  handleChange = function(book, event) {
+    this.props.onShelfChange(book, event.target.value);
+  };
 
   render() {
-    console.log(this.props.actions);
+    let {book, actions} = this.props;
     return <div className="book">
       <div className="book-top">
         <div className="book-cover" style={{
           width: 128,
           height: 193,
-          backgroundImage: `url(${this.props.bookImage})`
+          backgroundImage: `url(${book.imageLinks.smallThumbnail})`
         }}/>
         <div className="book-shelf-changer">
-          <select onChange={this.handleChange}>
+          <select onChange={(event) => (this.handleChange(book, event))} value={this.props.selectedAction.key}>
             <option value="none" disabled>Move to...</option>
-            {this.props.actions.map((action) => (
-              <MenuActionComponent key={action.key} name={action.name} value={action.key} disabled={action.key === this.props.selectedActionKey}/>
+            {actions.map((action) => (
+              <MenuActionComponent key={action.key} name={action.name} value={action.key}/>
             ))}
           </select>
         </div>
       </div>
-      <div className="book-title">{this.props.bookTitle}</div>
-      <div className="book-authors">{this.props.bookAuthors.join(', ')}</div>
+      <div className="book-title">{book.title}</div>
+      <div className="book-authors">{book.authors.join(', ')}</div>
     </div>
   }
 }
