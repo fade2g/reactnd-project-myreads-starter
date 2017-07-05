@@ -33,7 +33,7 @@ class ShelfComponent extends Component {
       <div className="bookshelf-books">
         <ol className="books-grid">
           {this.props.books.map((book) => (
-            <li key={book.canonicalVolumeLink}>
+            <li key={book.id}>
               <BookComponent book={book}
                              actions={actions}
                              selectedAction={selectedAction}
