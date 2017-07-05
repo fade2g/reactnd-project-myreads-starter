@@ -42,27 +42,47 @@ class BooksApp extends React.Component {
   };
 
   componentDidMount() {
-    BooksAPI.getAll().then((response) => {
-      console.log(response);
-      this.setState({books: response});
-    })
+    this.setInitialState();
   }
 
-  handleShelfChange = function(book, newShelf) {
+  // Sets the initial state by loading all books from backend
+  // and simply setting the state object for the books
+  setInitialState = function () {
+    BooksAPI.getAll().then((response) => {
+      this.setState({books: response});
+    })
+  };
+
+  /* This function transforms the update response from the backend.
+   Backend response is {shelfName: [id1, id2, ...]
+   Result will be {id1: shelfName, id2: shelfName}
+   Can be used as lookup table
+   */
+  transformUpdaateResponseToHashmap(updateResponse) {
+    let hashMap = {};
+    Object.getOwnPropertyNames(updateResponse).forEach((val) => {
+      updateResponse[val].reduce((hashMap, id) => {
+        hashMap[id] = val;
+        return hashMap
+      }, hashMap)
+    });
+    return hashMap
+  }
+
+  handleShelfChange = function (book, newShelf) {
     BooksAPI.update(book, newShelf).then((response) => {
-      console.log(response);
-      // Update the shelf of the book according to the required shelf
-      // Note: This does not evaluate the response, as the response
-      //       has a very different structure then the original structure
-      // TODO HHE Check, if structures can be unified
-      //          (i.e. first transform response to simple array or make hashMap with books instead of array)
+      if (response.error) {
+        console.warn('Error updating backend. Reset books to initial state', response.error);
+        this.setInitialState();
+        return;
+      }
+      let hashMap = this.transformUpdaateResponseToHashmap(response);
       this.setState((previousState) => {
         return {
           books: previousState.books.map((newBook) => {
-            if (newBook.id === book.id) {
-              newBook.shelf = newShelf
-            }
+            newBook.shelf = hashMap[newBook.id];
             return newBook;
+
           })
         }
       });
@@ -93,16 +113,16 @@ class BooksApp extends React.Component {
               <div className="list-books-title">
                 <h1>MyReads</h1>
               </div>
-                {
-                  this.state.sections.filter((section) => !section.hidden).map((section) => (
-                    <div key={section.key} className="list-books-content">
+              {
+                this.state.sections.filter((section) => !section.hidden).map((section) => (
+                  <div key={section.key} className="list-books-content">
                     <ShelfComponent shelf={section}
                                     books={this.state.books.filter((book) => book.shelf === section.key)}
                                     sections={this.state.sections}
                                     onShelfChange={(book, newShelf) => (this.handleShelfChange(book, newShelf))}/>
-                    </div>
-                  ))
-                }
+                  </div>
+                ))
+              }
             </div>
             <div className="open-search">
               <a onClick={() => this.setState({showSearchPage: true})}>Add a book</a>
