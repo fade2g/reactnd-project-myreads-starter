@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import MenuActionComponent from './MenuActionComponent';
+import MenuComponent from "./MenuComponent";
 
 
 class BookComponent extends Component {
@@ -13,12 +13,8 @@ class BookComponent extends Component {
     onShelfChange: PropTypes.func.isRequired
   };
 
-  handleChange = function(book, event) {
-    this.props.onShelfChange(book, event.target.value);
-  };
-
   render() {
-    let {book, actions} = this.props;
+    let {book, actions, selectedAction, onShelfChange} = this.props;
     return <div className="book">
       <div className="book-top">
         <div className="book-cover" style={{
@@ -26,14 +22,7 @@ class BookComponent extends Component {
           height: 193,
           backgroundImage: `url(${book.imageLinks.smallThumbnail})`
         }}/>
-        <div className="book-shelf-changer">
-          <select onChange={(event) => (this.handleChange(book, event))} value={this.props.selectedAction.key}>
-            <option value="none" disabled>Move to...</option>
-            {actions.map((action) => (
-              <MenuActionComponent key={action.key} name={action.name} value={action.key}/>
-            ))}
-          </select>
-        </div>
+        <MenuComponent book={book} actions={actions} selectedAction={selectedAction} onMenuAction={onShelfChange}/>
       </div>
       <div className="book-title">{book.title}</div>
       <div className="book-authors">{book.authors.join(', ')}</div>
