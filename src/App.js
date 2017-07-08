@@ -1,8 +1,11 @@
 import React from 'react'
+import { Route } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 
 import ShelfComponent from './ShelfComponent';
+import OpenSearchMenuComponent from "./OpenSearchMenuComponent";
+import SearchComponent from "./SearchComponent";
 
 class BooksApp extends React.Component {
   state = {
@@ -95,19 +98,8 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        {this.state.showSearchPage ? (
-          <div className="search-books">
-            <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({showSearchPage: false})}>Close</a>
-              <div className="search-books-input-wrapper">
-                <input type="text" placeholder="Search by title or author"/>
-              </div>
-            </div>
-            <div className="search-books-results">
-              <ol className="books-grid">TODO</ol>
-            </div>
-          </div>
-        ) : (
+        <Route exact path="/search" component={ SearchComponent }/>
+        <Route exact path="/" render={() =>(
           <div>
             <div className="list-books">
               <div className="list-books-title">
@@ -124,11 +116,9 @@ class BooksApp extends React.Component {
                 ))
               }
             </div>
-            <div className="open-search">
-              <a onClick={() => this.setState({showSearchPage: true})}>Add a book</a>
-            </div>
+            <OpenSearchMenuComponent/>
           </div>
-        )}
+        )} />
       </div>
     )
   }
