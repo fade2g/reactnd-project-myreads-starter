@@ -9,22 +9,12 @@ class ShelfComponent extends Component {
   static propTypes = {
     shelf: PropTypes.object.isRequired,
     books: PropTypes.array.isRequired,
-    sections: PropTypes.array.isRequired,
+    actions: PropTypes.array.isRequired,
     onShelfChange: PropTypes.func.isRequired
   };
 
-  handleShelfChange = function(book, newShelf) {
-    this.props.onShelfChange(book, newShelf);
-  };
-
   render() {
-    let actions = this.props.sections.map((section) => (
-      {
-        name: section.title,
-        key: section.key
-      }
-    ));
-    let selectedAction = this.props.sections.filter((section) => (
+    let selectedAction = this.props.actions.filter((section) => (
       section.key === this.props.shelf.key
     ))[0];
 
@@ -35,9 +25,9 @@ class ShelfComponent extends Component {
           {this.props.books.map((book) => (
             <li key={book.id}>
               <BookComponent book={book}
-                             actions={actions}
+                             actions={this.props.actions}
                              selectedAction={selectedAction}
-              onShelfChange={(book, newShelf) => (this.handleShelfChange(book, newShelf))}/>
+              onShelfChange={(book, newShelf) => (this.props.onShelfChange(book, newShelf))}/>
             </li>
           ))}
         </ol>

@@ -20,12 +20,12 @@ class BookComponent extends Component {
         <div className="book-cover" style={{
           width: 128,
           height: 193,
-          backgroundImage: `url(${book.imageLinks.smallThumbnail})`
+          backgroundImage: book.imageLinks && book.imageLinks.smallThumbnail ? `url(${ book.imageLinks.smallThumbnail})` : ''
         }}/>
         <MenuComponent book={book} actions={actions} selectedAction={selectedAction} onMenuAction={onShelfChange}/>
       </div>
       <div className="book-title">{book.title}</div>
-      <div className="book-authors">{book.authors.join(', ')}</div>
+      <div className="book-authors">{Array.isArray(book.authors) ? book.authors.join(', '): book.authors}</div>
     </div>
   }
 }

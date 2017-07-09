@@ -1,18 +1,31 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
+import BookComponent from "./BookComponent";
 
 class SearchComponent extends Component {
 
+  static propTypes = {
+    actions: PropTypes.array.isRequired,
+    assignedBooks: PropTypes.object.isRequired,
+    onShelfChange: PropTypes.func.isRequired
+  };
+
   state = {
     searchTerm: '',
-    foundBooks: []
+    books: []
   };
 
   handleChange = (event) => {
-    this.setState({searchTerm: event.target.value});
-    BooksAPI.search(this.state.searchTerm, 20).then((response) => {
-      this.setState({books: response});
+    let searchTerm = event.target.value;
+    this.setState({searchTerm: searchTerm});
+    BooksAPI.search(searchTerm, 20).then((response) => {
+      if (response && response.error) {
+        console.warn('Error:', response);
+        return;
+      }
+      this.setState({books: response ? response :  []});
     })
   };
 
@@ -25,7 +38,16 @@ class SearchComponent extends Component {
         </div>
       </div>
       <div className="search-books-results">
-        <ol className="books-grid">TODO</ol>
+        <ol className="books-grid">
+          {this.state.books.map((book) => (
+            <li key={book.id}>
+              <BookComponent book={book}
+                             actions={this.props.actions}
+                             selectedAction={{key: this.props.assignedBooks[book.id] ? this.props.assignedBooks[book.id] : ''}}
+                             onShelfChange={(book, shelfKey) => (this.props.onShelfChange(book, shelfKey))}/>
+            </li>
+          ))}
+        </ol>
       </div>
     </div>
   }

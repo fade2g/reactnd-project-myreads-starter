@@ -1,48 +1,42 @@
 import React from 'react'
-import { Route } from 'react-router-dom'
+import {Route} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 
-import ShelfComponent from './ShelfComponent';
-import OpenSearchMenuComponent from "./OpenSearchMenuComponent";
 import SearchComponent from "./SearchComponent";
+import ShelvesComponent from "./ShelvesComponent";
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false,
     // Holds the books retrieved from backend
     books: [],
-    // base data with the available sections
-    sections: [
-      {
-        key: 'currentlyReading',
-        title: 'Currently Reading',
-        hidden: false
-      },
-      {
-        key: 'wantToRead',
-        title: 'Want to Read',
-        hidden: false
-      },
-      {
-        key: 'read',
-        title: 'Read',
-        hidden: false
-      },
-      // special section to remove book from shelf. Not visible as a section (thus: hidden === false)
-      {
-        key: '',
-        title: 'None',
-        hidden: true
-      }
-    ]
+    assignedBooks: {}
   };
+
+  // base data with available actions. The key matches the key of the sections
+  availableActions = [
+    {
+      key: 'currentlyReading',
+      name: 'Currently Reading',
+      isSection: true
+    },
+    {
+      key: 'wantToRead',
+      name: 'Want to Read',
+      isSection: true
+    },
+    {
+      key: 'read',
+      name: 'Read',
+      isSection: true
+    },
+    // special section to remove book from shelf. Not visible as a section (thus: hidden === false)
+    {
+      key: '',
+      name: 'None',
+      isSection: false
+    }
+  ];
 
   componentDidMount() {
     this.setInitialState();
@@ -52,16 +46,32 @@ class BooksApp extends React.Component {
   // and simply setting the state object for the books
   setInitialState = function () {
     BooksAPI.getAll().then((response) => {
-      this.setState({books: response});
+      this.setBooks(response);
+      this.setAssignedBooks(response);
     })
   };
+
+  setBooks(books) {
+    this.setState({books: books});
+  }
+
+  // this function updates the state with an hashmap based on the books in the state and their shelf assignment
+  // Hashmap is as follows: {id1: 'shelf1', id2: 'shelf1', id3: 'shelf2'}
+  setAssignedBooks(books) {
+    let hashMap = {};
+    books.reduce((hashMap, book) => {
+      hashMap[book.id] = book.shelf;
+      return hashMap
+    }, hashMap);
+    this.setState({assignedBooks: hashMap});
+  }
 
   /* This function transforms the update response from the backend.
    Backend response is {shelfName: [id1, id2, ...]
    Result will be {id1: shelfName, id2: shelfName}
    Can be used as lookup table
    */
-  transformUpdaateResponseToHashmap(updateResponse) {
+  transformUpdateResponseToHashmap(updateResponse) {
     let hashMap = {};
     Object.getOwnPropertyNames(updateResponse).forEach((val) => {
       updateResponse[val].reduce((hashMap, id) => {
@@ -72,24 +82,39 @@ class BooksApp extends React.Component {
     return hashMap
   }
 
-  handleShelfChange = function (book, newShelf) {
-    BooksAPI.update(book, newShelf).then((response) => {
-      if (response.error) {
-        console.warn('Error updating backend. Reset books to initial state', response.error);
-        this.setInitialState();
-        return;
-      }
-      let hashMap = this.transformUpdaateResponseToHashmap(response);
-      this.setState((previousState) => {
-        return {
-          books: previousState.books.map((newBook) => {
-            newBook.shelf = hashMap[newBook.id];
-            return newBook;
+  // This method moves the book to another shelf.
+  // If the book is not yet in a shelf, it sill be added to list of available books (i.e. the props.books array)
+  // it is important, that the hashmap of the assignedBooks is updated as well. It is being used by the search components
+  // to figure out, if a book in the search results is already in a shelf
+  handleShelfChange = (book, shelfKey) => {
 
-          })
+    BooksAPI.update(book, shelfKey)
+      .then((response) => {
+        if (response.error) {
+          console.warn('Error updating backend. Reset books to initial state', response.error);
+          this.setInitialState();
+          return;
         }
-      });
-    })
+        let hashMap = this.transformUpdateResponseToHashmap(response);
+        // Update state with the shelf information of the backend
+        // As the information from the backend is a list of shelf assignment and not (as could be expected)
+        // be "only" the updated book, it must be assumed, that other books have been moved around
+        // Note: There are currently no integrity checks
+        // (e.g. a book is in the shelf list that was never retrieved)
+        this.setState((previousState) => {
+          // If the book was not yet in the books array, add it
+          if (!this.state.assignedBooks[book.id]) {
+            previousState.books.push(book)
+          }
+          return {
+            books: previousState.books.map((newBook) => {
+              newBook.shelf = hashMap[newBook.id];
+              return newBook;
+            })
+          }
+        });
+        this.setAssignedBooks(this.state.books);
+      })
       .catch((error) => (
         console.log(error)
       ))
@@ -98,27 +123,19 @@ class BooksApp extends React.Component {
   render() {
     return (
       <div className="app">
-        <Route exact path="/search" component={ SearchComponent }/>
-        <Route exact path="/" render={() =>(
-          <div>
-            <div className="list-books">
-              <div className="list-books-title">
-                <h1>MyReads</h1>
-              </div>
-              {
-                this.state.sections.filter((section) => !section.hidden).map((section) => (
-                  <div key={section.key} className="list-books-content">
-                    <ShelfComponent shelf={section}
-                                    books={this.state.books.filter((book) => book.shelf === section.key)}
-                                    sections={this.state.sections}
-                                    onShelfChange={(book, newShelf) => (this.handleShelfChange(book, newShelf))}/>
-                  </div>
-                ))
-              }
-            </div>
-            <OpenSearchMenuComponent/>
-          </div>
-        )} />
+        <Route exact path="/search" render={() => (
+          <SearchComponent
+            actions={this.availableActions}
+            assignedBooks={this.state.assignedBooks}
+            onShelfChange={(book, shelfKey) => (this.handleShelfChange(book, shelfKey))}/>
+        )}/>
+        <Route exact path="/" render={() => (
+          <ShelvesComponent
+            books={this.state.books}
+            actions={this.availableActions}
+            onShelfChange={this.handleShelfChange}
+            onShelfChange2={(book, shelfKey) => (this.handleShelfChange(book, shelfKey))}/>
+        )}/>
       </div>
     )
   }
