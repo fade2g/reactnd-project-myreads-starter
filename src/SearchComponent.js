@@ -6,9 +6,10 @@ import BookComponent from "./BookComponent";
 
 class SearchComponent extends Component {
 
+  //noinspection JSUnusedGlobalSymbols
   static propTypes = {
+    shelvedBooks: PropTypes.array.isRequired,
     actions: PropTypes.array.isRequired,
-    assignedBooks: PropTypes.object.isRequired,
     onShelfChange: PropTypes.func.isRequired
   };
 
@@ -30,6 +31,12 @@ class SearchComponent extends Component {
   };
 
   render() {
+    let assignmentHashMap = {};
+    this.props.shelvedBooks.reduce((hashMap, book) => {
+      hashMap[book.id] = book.shelf;
+      return hashMap
+    }, assignmentHashMap);
+
     return <div className="search-books">
       <div className="search-books-bar">
         <Link to="/" className="close-search">Close</Link>
@@ -43,7 +50,7 @@ class SearchComponent extends Component {
             <li key={book.id}>
               <BookComponent book={book}
                              actions={this.props.actions}
-                             selectedAction={{key: this.props.assignedBooks[book.id] ? this.props.assignedBooks[book.id] : ''}}
+                             selectedAction={{key: assignmentHashMap[book.id] ? assignmentHashMap[book.id] : ''}}
                              onShelfChange={(book, shelfKey) => (this.props.onShelfChange(book, shelfKey))}/>
             </li>
           ))}

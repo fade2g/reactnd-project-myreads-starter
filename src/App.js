@@ -46,25 +46,9 @@ class BooksApp extends React.Component {
   // and simply setting the state object for the books
   setInitialState = function () {
     BooksAPI.getAll().then((response) => {
-      this.setBooks(response);
-      this.setAssignedBooks(response);
+      this.setState({books: response});
     })
   };
-
-  setBooks(books) {
-    this.setState({books: books});
-  }
-
-  // this function updates the state with an hashmap based on the books in the state and their shelf assignment
-  // Hashmap is as follows: {id1: 'shelf1', id2: 'shelf1', id3: 'shelf2'}
-  setAssignedBooks(books) {
-    let hashMap = {};
-    books.reduce((hashMap, book) => {
-      hashMap[book.id] = book.shelf;
-      return hashMap
-    }, hashMap);
-    this.setState({assignedBooks: hashMap});
-  }
 
   /* This function transforms the update response from the backend.
    Backend response is {shelfName: [id1, id2, ...]
@@ -102,8 +86,8 @@ class BooksApp extends React.Component {
         // Note: There are currently no integrity checks
         // (e.g. a book is in the shelf list that was never retrieved)
         this.setState((previousState) => {
-          // If the book was not yet in the books array, add it
-          if (!this.state.assignedBooks[book.id]) {
+          // If the book cannot be found in the current list of books, add it
+          if(previousState.books.filter((existingBooks) => existingBooks.id === book.id).length === 0) {
             previousState.books.push(book)
           }
           return {
@@ -113,7 +97,6 @@ class BooksApp extends React.Component {
             })
           }
         });
-        this.setAssignedBooks(this.state.books);
       })
       .catch((error) => (
         console.log(error)
@@ -125,8 +108,8 @@ class BooksApp extends React.Component {
       <div className="app">
         <Route exact path="/search" render={() => (
           <SearchComponent
+            shelvedBooks={this.state.books}
             actions={this.availableActions}
-            assignedBooks={this.state.assignedBooks}
             onShelfChange={(book, shelfKey) => (this.handleShelfChange(book, shelfKey))}/>
         )}/>
         <Route exact path="/" render={() => (
