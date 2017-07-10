@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import OpenSearchMenuComponent from "./OpenSearchMenuComponent";
-import * as BooksAPI from "./BooksAPI";
 import ShelfComponent from "./ShelfComponent";
 
 class ShelvesComponent extends Component {
@@ -11,18 +10,6 @@ class ShelvesComponent extends Component {
     books: PropTypes.array.isRequired,
     actions: PropTypes.array.isRequired,
     onShelfChange: PropTypes.func.isRequired
-  };
-
-  componentDidMount() {
-    this.setInitialState();
-  }
-
-  // Sets the initial state by loading all books from backend
-  // and simply setting the state object for the books
-  setInitialState = function () {
-    BooksAPI.getAll().then((response) => {
-      this.setState({books: response});
-    })
   };
 
   render() {
