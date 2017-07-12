@@ -1,10 +1,25 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import Book from "./Book";
 
 class Search extends Component {
+
+  debounce = function(func, wait, immediate) {
+    let timeout;
+    return function () {
+      let context = this, args = arguments;
+      let later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      let callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  };
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -18,7 +33,7 @@ class Search extends Component {
     books: []
   };
 
-  handleChange = (event) => {
+  handleChange = this.debounce((event) => {
     let searchTerm = event.target.value;
     this.setState({searchTerm: searchTerm});
     BooksAPI.search(searchTerm, 20).then((response) => {
@@ -26,9 +41,9 @@ class Search extends Component {
         console.warn('Error:', response);
         return;
       }
-      this.setState({books: response ? response :  []});
+      this.setState({books: response ? response : []});
     })
-  };
+  }, 300);
 
   render() {
     let assignmentHashMap = {};
@@ -41,7 +56,8 @@ class Search extends Component {
       <div className="search-books-bar">
         <Link to="/" className="close-search">Close</Link>
         <div className="search-books-input-wrapper">
-          <input type="text" placeholder="Search by title or author" value={this.props.searchTerm} onChange={(event) => (this.handleChange(event))}/>
+          <input type="text" placeholder="Search by title or author" value={this.props.searchTerm}
+                 onChange={(event) => {event.persist(); this.handleChange(event)}}/>
         </div>
       </div>
       <div className="search-books-results">
