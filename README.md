@@ -1,4 +1,4 @@
-This is my submission projebt for Udacity's React Fundamentals course for the "My Reads" project.
+This is my submission project for Udacity's React Fundamentals course for the "My Reads" project.
   
 ## Installation
 
