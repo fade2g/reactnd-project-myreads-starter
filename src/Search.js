@@ -6,7 +6,7 @@ import Book from "./Book";
 
 class Search extends Component {
 
-  debounce = function(func, wait, immediate) {
+  debounce = function (func, wait, immediate) {
     let timeout;
     return function () {
       let context = this, args = arguments;
@@ -36,9 +36,19 @@ class Search extends Component {
   handleChange = this.debounce((event) => {
     let searchTerm = event.target.value;
     this.setState({searchTerm: searchTerm});
+    if (!searchTerm) {
+      // No search term, no books
+      this.setState({books: []});
+      return;
+    }
     BooksAPI.search(searchTerm, 20).then((response) => {
       if (response && response.error) {
-        console.warn('Error:', response);
+        if (response.error === "empty query") {
+          // no hit, no books but no error
+          this.setState({books: []});
+        } else {
+          console.warn('Error:', response);
+        }
         return;
       }
       this.setState({books: response ? response : []});
@@ -57,7 +67,10 @@ class Search extends Component {
         <Link to="/" className="close-search">Close</Link>
         <div className="search-books-input-wrapper">
           <input type="text" placeholder="Search by title or author" value={this.props.searchTerm}
-                 onChange={(event) => {event.persist(); this.handleChange(event)}}/>
+                 onChange={(event) => {
+                   event.persist();
+                   this.handleChange(event)
+                 }}/>
         </div>
       </div>
       <div className="search-books-results">
