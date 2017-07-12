@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
-import MenuActionComponent from './MenuActionComponent';
+import MenuAction from './MenuAction';
 
 class MenuComponent extends Component {
   //noinspection JSUnusedGlobalSymbols
@@ -21,7 +21,7 @@ class MenuComponent extends Component {
       <select onChange={(event) => (this.handleChange(book, event))} value={selectedAction.key}>
         <option value="none" disabled>Move to...</option>
         {actions.map((action) => (
-          <MenuActionComponent key={action.key} name={action.name} value={action.key}/>
+          <MenuAction key={action.key} name={action.name} value={action.key}/>
         ))}
       </select>
     </div>

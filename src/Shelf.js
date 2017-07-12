@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import BookComponent from './BookComponent';
+import Book from './Book';
 
 
-class ShelfComponent extends Component {
+class Shelf extends Component {
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -24,10 +24,10 @@ class ShelfComponent extends Component {
         <ol className="books-grid">
           {this.props.books.map((book) => (
             <li key={book.id}>
-              <BookComponent book={book}
-                             actions={this.props.actions}
-                             selectedAction={selectedAction}
-              onShelfChange={(book, newShelf) => (this.props.onShelfChange(book, newShelf))}/>
+              <Book book={book}
+                    actions={this.props.actions}
+                    selectedAction={selectedAction}
+                    onShelfChange={(book, newShelf) => (this.props.onShelfChange(book, newShelf))}/>
             </li>
           ))}
         </ol>
@@ -35,4 +35,4 @@ class ShelfComponent extends Component {
     </div>
   }
 }
-export default ShelfComponent;
+export default Shelf;

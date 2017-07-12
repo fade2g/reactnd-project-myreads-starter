@@ -3,8 +3,8 @@ import {Route} from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 
-import SearchComponent from "./SearchComponent";
-import ShelvesComponent from "./ShelvesComponent";
+import Search from "./Search";
+import Shelves from "./Shelves";
 
 class BooksApp extends React.Component {
   state = {
@@ -107,13 +107,13 @@ class BooksApp extends React.Component {
     return (
       <div className="app">
         <Route exact path="/search" render={() => (
-          <SearchComponent
+          <Search
             shelvedBooks={this.state.books}
             actions={this.availableActions}
             onShelfChange={(book, shelfKey) => (this.handleShelfChange(book, shelfKey))}/>
         )}/>
         <Route exact path="/" render={() => (
-          <ShelvesComponent
+          <Shelves
             books={this.state.books}
             actions={this.availableActions}
             onShelfChange={this.handleShelfChange}

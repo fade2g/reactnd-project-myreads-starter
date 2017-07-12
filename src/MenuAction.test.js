@@ -1,14 +1,14 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 
-import MenuActionComponent from './MenuActionComponent';
+import MenuAction from './MenuAction';
 
-describe('MenuActionComponent', () => {
+describe('MenuAction', () => {
   it('puts name prop as text', () => {
     const key = 'key';
     const name = 'Action Name';
 
-    const wrapper = shallow(<MenuActionComponent name={name} value={key}/>);
+    const wrapper = shallow(<MenuAction name={name} value={key}/>);
     expect(wrapper.contains(name)).toEqual(true);
   });
 
@@ -16,7 +16,7 @@ describe('MenuActionComponent', () => {
     const key = 'key';
     const name = 'Action Name';
 
-    const wrapper = shallow(<MenuActionComponent name={name} value={key}/>);
+    const wrapper = shallow(<MenuAction name={name} value={key}/>);
     expect(wrapper.find('option').prop('value')).toEqual(key);
   });
 });

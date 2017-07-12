@@ -1,8 +1,7 @@
 import React from 'react';
 import {shallow, mount} from 'enzyme';
-import sinon from 'sinon';
 
-import MenuComponent from './MenuComponent';
+import Menu from './Menu';
 
 describe('MenuComponent', () => {
   const basicBook = {id: 1};
@@ -16,7 +15,7 @@ describe('MenuComponent', () => {
     const actions = [];
     const selectedAction = {};
 
-    const wrapper = shallow(<MenuComponent
+    const wrapper = shallow(<Menu
       book={basicBook}
       actions={actions}
       selectedAction={selectedAction}
@@ -31,7 +30,7 @@ describe('MenuComponent', () => {
     const actions = [{key: 'one', name: 'ONE'}];
     const selectedAction = {};
 
-    const mounted = mount(<MenuComponent
+    const mounted = mount(<Menu
       book={basicBook}
       actions={actions}
       selectedAction={selectedAction}
@@ -47,7 +46,7 @@ describe('MenuComponent', () => {
     const actions = [{key: 'one', name: 'ONE'}];
     const selectedAction = {};
 
-    const mounted = mount(<MenuComponent
+    const mounted = mount(<Menu
       book={basicBook}
       actions={actions}
       selectedAction={selectedAction}

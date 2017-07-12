@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
-class MenuActionComponent extends Component {
+class MenuAction extends Component {
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -14,4 +14,4 @@ class MenuActionComponent extends Component {
   }
 }
 
-export default MenuActionComponent;
+export default MenuAction;

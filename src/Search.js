@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
-import BookComponent from "./BookComponent";
+import Book from "./Book";
 
-class SearchComponent extends Component {
+class Search extends Component {
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -48,10 +48,10 @@ class SearchComponent extends Component {
         <ol className="books-grid">
           {this.state.books.map((book) => (
             <li key={book.id}>
-              <BookComponent book={book}
-                             actions={this.props.actions}
-                             selectedAction={{key: assignmentHashMap[book.id] ? assignmentHashMap[book.id] : ''}}
-                             onShelfChange={(book, shelfKey) => (this.props.onShelfChange(book, shelfKey))}/>
+              <Book book={book}
+                    actions={this.props.actions}
+                    selectedAction={{key: assignmentHashMap[book.id] ? assignmentHashMap[book.id] : ''}}
+                    onShelfChange={(book, shelfKey) => (this.props.onShelfChange(book, shelfKey))}/>
             </li>
           ))}
         </ol>
@@ -60,4 +60,4 @@ class SearchComponent extends Component {
   }
 }
 
-export default SearchComponent;
+export default Search;

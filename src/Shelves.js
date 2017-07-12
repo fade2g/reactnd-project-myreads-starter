@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import OpenSearchMenuComponent from "./OpenSearchMenuComponent";
-import ShelfComponent from "./ShelfComponent";
+import OpenSearchMenu from "./OpenSearchMenu";
+import Shelf from "./Shelf";
 
-class ShelvesComponent extends Component {
+class Shelves extends Component {
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -22,7 +22,7 @@ class ShelvesComponent extends Component {
         {
           actions.filter((action) => action.isSection).map((section) => (
             <div key={section.key} className="list-books-content">
-              <ShelfComponent shelf={section}
+              <Shelf shelf={section}
                               books={this.props.books.filter((book) => book.shelf === section.key)}
                               actions={actions}
                               onShelfChange={(book, shelfKey) => (this.props.onShelfChange(book, shelfKey)) }/>
@@ -30,9 +30,9 @@ class ShelvesComponent extends Component {
           ))
         }
       </div>
-      <OpenSearchMenuComponent/>
+      <OpenSearchMenu/>
     </div>
   }
 }
 
-export  default ShelvesComponent
+export  default Shelves

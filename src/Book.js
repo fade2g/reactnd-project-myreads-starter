@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import MenuComponent from "./MenuComponent";
+import Menu from "./Menu";
 
 
-class BookComponent extends Component {
+class Book extends Component {
 
   //noinspection JSUnusedGlobalSymbols
   static propTypes = {
@@ -22,7 +22,7 @@ class BookComponent extends Component {
           height: 193,
           backgroundImage: book.imageLinks && book.imageLinks.smallThumbnail ? `url(${ book.imageLinks.smallThumbnail})` : ''
         }}/>
-        <MenuComponent book={book} actions={actions} selectedAction={selectedAction} onMenuAction={onShelfChange}/>
+        <Menu book={book} actions={actions} selectedAction={selectedAction} onMenuAction={onShelfChange}/>
       </div>
       <div className="book-title">{book.title}</div>
       <div className="book-authors">{Array.isArray(book.authors) ? book.authors.join(', '): book.authors}</div>
@@ -30,4 +30,4 @@ class BookComponent extends Component {
   }
 }
 
-export default BookComponent;
+export default Book;
