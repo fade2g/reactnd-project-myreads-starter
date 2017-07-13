@@ -3,7 +3,7 @@ import {shallow, mount} from 'enzyme';
 
 import Menu from './Menu';
 
-describe('MenuComponent', () => {
+describe('Menu component', () => {
   const basicBook = {id: 1};
   const handlerCallback = jest.fn();
 
