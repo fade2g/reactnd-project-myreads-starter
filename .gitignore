@@ -1,4 +1,6 @@
 .idea
 node_modules
-yarn.lock
+build
 .DS_Store
+yarn.lock
+firebase-debug.log
